@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+
+## Enable to point at the script compilation folder
+# (to be found in the subfolder /lib)
+SCRIPT_HOME="/home/rob/Code/scala/CPPToScala"
+
+## Enable to point at a different Scala installation
+# (to be found in the subfolder /lib)
+SCALA_HOME="/home/rob/Deployed/scala-2.11.7"
+
+SCALAEXE="$SCALA_HOME/bin/scala" 
+
+
+$SCALAEXE -toolcp $SCRIPT_HOME/lib/parboiled-scala_2.10-1.1.7.jar -toolcp $SCRIPT_HOME/lib/parboiled-core-1.1.7.jar -classpath $SCRIPT_HOME/build/main/scala converter.CPPToScala "$@"

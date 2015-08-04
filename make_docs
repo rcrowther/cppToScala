@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+##############################################################################
+# Copyright 20015 rcrowther
+#
+# This is free software; see the distribution for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+##############################################################################
+
+## Point at a scala installation
+# If empty tries for an installed version.
+#SCALA_HOME=""
+
+if [[ -n "$SCALA_HOME" ]]; then
+SCALAEXE="$SCALA_HOME/bin/scaladoc" 
+else
+SCALAEXE="scaladoc"
+fi
+
+echo "creating documentation..."
+
+mkdir doc
+
+SRCS="$(find $PWD/src/ | grep scala$)"
+#echo ${SRCS}
+
+$SCALAEXE  -toolcp lib/parboiled-scala_2.10-1.1.7.jar -toolcp lib/parboiled-core-1.1.7.jar  -d doc -doc-title CPPToScala -doc-footer "by rcrowther" $SRCS

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+##############################################################################
+# Copyright 20015 rcrowther
+#
+# This is free software; see the distribution for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+##############################################################################
+
+## Point at a scala installation
+# Empty tries for an installed version.
+SCALA_HOME="/home/rob/Deployed/scala-2.11.7"
+
+## The name of the executable to create
+SCALA_EXECUTABLE="cppToScala"
+
+
+#!SCALA_HOME.isEmpty 
+#if [[ -n "$SCALA_HOME" ]]; then
+SCALAEXE="$SCALA_HOME/bin/scalac" 
+#else
+#SCALAEXE="scalac"
+#fi
+
+
+if [[ -n "$JAVA_HOME" ]]; then
+JAREXE="$JAVA_HOME/bin/" 
+else
+JAREXE="jar"
+fi
+
+
+mkdir build
+mkdir build/main
+mkdir build/main/scala
+PWD="$(pwd)"
+echo "compiling..."
+
+
+SRCS="$(find $PWD/src/ | grep scala$)"
+#-exec grep \"scala$\" {}
+
+#LIBS="$(find $PWD/lib/ | grep parboiled)"
+#echo "LIBS" $LIBS
+
+# 'DUMB' sinks output
+DUMB="$($SCALAEXE -d build/main/scala -toolcp lib/parboiled-scala_2.10-1.1.7.jar -toolcp lib/parboiled-core-1.1.7.jar $SRCS)"
+
+#cp lib/parboiled-core-1.1.7.jar build/main/scala
+#cp lib/parboiled-scala_2.10-1.1.7.jar build/main/scala
+#cp $SCALA_HOME/lib/scala-library.jar build/main/scala
+
+# Make manifest
+# Sealed: true
+# Class-Path: scala-library.jar parboiled-core-1.1.7.jar parboiled-scala_2.10-1.1.7.jar
+#echo "Manifest-Version: 1.0
+#Specification-Title: $SCALA_EXECUTABLE
+#Main-Class: converter.CPPToScala
+#" > "$PWD/MANIFEST.MF"
+
+# Make .jar
+#$JAREXE cfm $SCALA_EXECUTABLE.jar MANIFEST.MF -C build/main/scala . 
+#lib/parboiled-scala_2.10-1.1.7.jar lib/parboiled-core-1.1.7.jar
+
+# Remove the now-copied manifest
+#rm -v MANIFEST.MF
+
+echo "done"
