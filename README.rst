@@ -107,15 +107,15 @@ or, ::
 Commandline
 ==============
 :makeComplementaryObjects:
- - Make a complementary object. Constructors, if successfully parsed, are turned into factory objects.
+  Make a complementary object. Constructors, if successfully parsed, are turned into factory objects.
 :commentUnparsedLines:
- - put a comment on lines where the parsing gave up. Since this is 2/3 of a conversion, the output can be tedious at length, but the switch results help spot places parsing failed.
-:verticalParams :
- - arrange method parameters vertically. Not a common code style, but helps the visibility of conversion issues.
+  put a comment on lines where the parsing gave up. Since this is 2/3 of a conversion, the output can be tedious at length, but the switch results help spot places parsing failed.
+:verticalParams:
+  arrange method parameters vertically. Not a common code style, but helps the visibility of conversion issues.
 :tabBy2:
- - only tab by 2 spaces, not 4 (2 is common in Scala, but 4 is easier to read, and compare to C++)
+  only tab by 2 spaces, not 4 (2 is common in Scala, but 4 is easier to read, and compare to C++)
 : noNamespacing:
- - Do not place namespace indications on namespaced code. Less eccentric, but the comments help.
+  do not place namespace indications on namespaced code. Less eccentric, but the comments help.
 
 
 Overall
