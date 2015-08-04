@@ -32,14 +32,14 @@ This is an unusual take on parsing, and I don't know what the pros do, but is fu
 For example, if you feed the converter something else (I tried OCAML) it will comment everything. The aim is, the internal parser should never fail.
 
 
- Namespaces and classes
+Namespaces and classes
 -----------------------
 Namespaces... the intentions of C++ namespaces will not translate to Scala, so the converter comments them. Unless the namespace has no label/identifier --- then it is dropped.
 
-Class heading code is mostly handled. Constuctors and destructors are commented (constructor may be handled sometimes, but not now). The parser recognises basic templates (complexity will throw it) and the converter produces generics.
+Class heading code is mostly handled. Constructors and destructors are commented (constructor may be handled sometimes, but not now). The parser recognises basic templates (complexity will throw it) and the converter produces generics.
 
 
- AST manipulation
+AST manipulation
 -------------------
 A compiler 'phase', but there is only one.
 
@@ -50,26 +50,26 @@ Tree code can also construct a complementary object.
 ...and the tree code will surround namespaced objects with commented namespace marks (while dropping inline namespacing - see down a bit). This can be erratic in formatting, and making a C++ converter write C++ code is a joke. The author must like jokes (however, this option is default and useful, especially on `.cpp` files collecting namespaced functions/methods).
 
 
- Methods
+Methods
 ---------
 Basic templates are sometimes recognised. The parser will heave through attributes parameters and body declarations. It will fail on the unusual, though.
 
 Most attributes are dropped. Recognised templating becomes generic. Types are switched to tail positioning and rewritten.
 
 
- Fields
+Fields
 -------
-Or the many names C++ calls them. These are slashed from anything after them, e.g. assiging expressions, prefixed with 'var' and the types converted.
+Or the many names C++ calls them. These are slashed from anything after them, e.g. assigning expressions, prefixed with 'var' and the types converted.
 
 
- Type conversion
+Type conversion
 ------------------
 If the parser succeeds on code in method or field declarations, the converter must convert C++ types to Java types. Most types dumb-translate --- `double` becomes `Double`. 
 
-But `char` is commented - it may be a byte or ASCII. In combined declarations such as `long long int`, if more than one reference is made to `long`, then the converter writes a `Long`, otherwise `Int`. Crude, but so is oil.
+But `char` is commented - it may be a byte or ASCII. In combined declarations such as `long long int`, if more than one reference is made to `long`, then the converter writes a `Long`, otherwise `Int`. Crude - but so is oil.
 
 
- Code block contents
+Code block contents
 --------------------
 Parsing gets looser inside blocks. Within method code, it's uninvolved, making no effort to parse expressions at all.
 
@@ -82,13 +82,13 @@ Don't expect too much.
 It also. because Scala hasn't get them. can parse postfixed decrements and increments,
 
 
- Oddities
+Oddities
 -----------
 The stubborn attempt to parse code, come what may, means the converter can go adrift. Formatting may wander. A good indication code did not parse - that's the author's excuse.
 
 
 
- Building
+Building
 ===========
 On Linux, run, ::
 
@@ -104,33 +104,33 @@ or, ::
 
 
 
- Commandline
+Commandline
 ==============
 :makeComplementaryObjects:
- - Make a complementary object. Constructers, if sucessfully parsed, are turned into factory objects.
+ - Make a complementary object. Constructors, if successfully parsed, are turned into factory objects.
 :commentUnparsedLines:
  - put a comment on lines where the parsing gave up. Since this is 2/3 of a conversion, the output can be tedious at length, but the switch results help spot places parsing failed.
 :verticalParams :
- - arrage method parameters vertically. Not a common code style, but helps the visibility of conversion issues.
+ - arrange method parameters vertically. Not a common code style, but helps the visibility of conversion issues.
 :tabBy2:
  - only tab by 2 spaces, not 4 (2 is common in Scala, but 4 is easier to read, and compare to C++)
 : noNamespacing:
  - Do not place namespace indications on namespaced code. Less eccentric, but the comments help.
 
 
- Overall
+Overall
 ============
-The converter will have a go at converting toplevel code and namespacing. It catches some methods and fields. It has only occassional stabs at code in blocks, mainly C++ which will not work at all in Scala.
+The converter will have a go at converting toplevel code and namespacing. It catches some methods and fields. It has only occasional stabs at code in blocks, mainly C++ which will not work at all in Scala.
 
 Expect it to make working code and you will be disappointed. It can't parse `Hello world.cpp`. Ask it to do some grunt work, and it may help.
 
- Last thoughts
+Last thoughts
 ================
-And it should be written in OCAML or Haskell or something. It would launch faster. But Scala is way easier to handle.
+...and it should be written in OCAML or Haskell or something. It would launch faster. But Scala is way easier to handle.
 
 
 References
 ==========
-Dont blame him, my fault,
+Don't blame him, my fault,
   https://github.com/sirthias/parboiled/wiki
 
