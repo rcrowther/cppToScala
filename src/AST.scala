@@ -499,11 +499,10 @@ object AST {
 
   /** Block of code.
     *
-    * Intented at curent mark, no brackets. See `codeBlock`.
+    * Written at current mark, no brackets. See `codeBlock`.
     */
   def simpleCodeBlock(b: StringBuilder, n: List[AstNode]) {
     n.foreach(toScalaRaw(b, _))
-    //indent(b, "\n")
   }
 
   def methodModifierWrite(
@@ -523,7 +522,8 @@ object AST {
 
   }
 
-  /**
+  /** Writes builtin typess.
+    *
     * @param preserve comment, but do not drop, unknown types
     * @return true if a type was printed (commented or not), else false.
     */
@@ -643,44 +643,54 @@ object AST {
     typeAscriptionWrite(b, n.typ, true, false)
   }
 
-  /** Tests if a list is empty.
-    * 
-    * Parboiled 'separator =' enters empty nodes - necessitate this.
+
+
+  /** Write a list of parameters.
+    *
+    * NB: Internally, parameters are called `TypeIdPair`
+    *
+    * @return true if a list was printed (commented or not), else false.
     */
-  def typedIdentifierListIsEmpty(list: List[TypeIdPairNode])
+  def typedIdentifierListWrite(b: StringBuilder, list: List[TypeIdPairNode])
       : Boolean =
   {
-    //(list(0).name.text.isEmpty)
-    list.isEmpty
-  }
+    if (list.isEmpty) false
+    else {
+      var first = true
 
-  /**
-    * Protect with `typedIdentifierListIsEmpty`
-    */
-  def typedIdentifierListWrite(b: StringBuilder, list: List[TypeIdPairNode]) {
-    var first = true
+      b += '('
 
-    // Temporary
-    if (verticalParams) {
-      indentInc
-    }
-
-    list.foreach{ elem =>
-      if (first) first = false
-      else b ++= ", "
+      // Temporary
       if (verticalParams) {
-        newIndent(b)
+        indentInc
       }
-      typedIdentifierWrite(b, elem)
-    }
 
-    // Reset increment
-    if (verticalParams) {
-      indentDec
+      list.foreach{ elem =>
+        if (first) first = false
+        else b ++= ", "
+        if (verticalParams) {
+          newIndent(b)
+        }
+        typedIdentifierWrite(b, elem)
+      }
+
+      // Reset increment
+      if (verticalParams) {
+        indentDec
+        newIndent(b)
+        b ++= ")"
+        b ++= "\n"
+      }
+      else   b ++= ")"
+
+      true
     }
   }
 
   /** Write an inheritance list.
+    *
+    * NB: Always vertical
+    *
     *  e.g. " extends Slacker with Looser"
     */
   def inheritanceWrite(b: StringBuilder, inherit: Seq[String]) {
@@ -699,7 +709,7 @@ object AST {
   /** Write an identifier list as comma-separated items.
     *  e.g. " extends Slacker with Looser"
     */
-  def identifierListCommasWrite(b: StringBuilder, list: Seq[IdentifierNode]) {
+  def identifierListCommasWrite(b: StringBuilder, list: List[IdentifierNode]) {
     var first = true
     list.foreach{ elem =>
       if (first) first = false
@@ -710,7 +720,7 @@ object AST {
 
   def genericList(b: StringBuilder, list: List[IdentifierNode]) {
     b += '['
-    list.foreach{ id => b ++= id.text }
+    identifierListCommasWrite(b, list)
     b += ']'
   }
 
@@ -721,6 +731,11 @@ object AST {
     }
   }
 
+  /** Writes a variable.
+    *
+    * This is the stub part of field declarations e.g. "const bool var move_house"
+    */
+  //TODO: COuld handle a guess at 'vals' too ('const' info is available...)
   def fieldKnowWrite(b: StringBuilder, n: FieldKnowNode) {
 
     indent(b)
@@ -734,6 +749,10 @@ object AST {
     //b ++= n.tail.text
   }
 
+  /** Process preprocessor 'import' lines.
+    *
+    * Removes quotes and replaces slashes with periods.
+    */
   def importTextProcess(text: String)
       : String =
   {
@@ -855,21 +874,10 @@ object AST {
 
         indent(b)
         b ++= "def this"
-        if (!typedIdentifierListIsEmpty(params)) {
 
-          b += '('
-          typedIdentifierListWrite(b, params)
+        // Write params
+        typedIdentifierListWrite(b, params)
 
-          if (verticalParams) {
-            newIndent(b)
-          }
-
-          b ++= ")"
-        }
-
-        if (verticalParams) {
-          b ++= "\n"
-        }
 
         b ++= " = ?this()\n"
         if(body != None) {
@@ -896,25 +904,14 @@ object AST {
           }
         }
 
-        if (!typedIdentifierListIsEmpty(params)) {
+        // Write params
+        typedIdentifierListWrite(b, params)
 
-          b += '('
-          typedIdentifierListWrite(b, params)
-
-          if (verticalParams) {
-            newIndent(b)
-          }
-
-          b ++= ")"
-        }
-
-        if (verticalParams) {
-          b ++= "\n"
-        }
 
 
         // If a type return was written
         // and if not known abstract...
+        // Indent ia little if vertical
         if (verticalParams) indentInc
         if (
           typeAscriptionWrite(b, returnType, false, verticalParams)

@@ -144,7 +144,7 @@ object CPPToScala {
 
     cl += (
       long = "commentUnparsed",
-      short = "cu",
+      short = "c",
       description = "comment unparsed lines"
     )
 

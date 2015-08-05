@@ -2,6 +2,7 @@ Postfix increment/decrement
 find abstract classes/traits
 kill empty bodies?
 Enable camel casing?
+FMStub is the beginning of treating methods consistently
 
 == 'No' for now
 Provide jar
