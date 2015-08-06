@@ -183,52 +183,80 @@ class CPPParser extends Parser {
   //  A.1.2  Keywords
   //-------------------------------------------------------------------------
 
+
+  final def ALIGNAS   = ("alignas" ~ !IdChar)
+  final def ALIGNOF   = ("alignof" ~ !IdChar)
+  final def ASM       = ("asm" ~ !IdChar)
   final def AUTO      = ("auto" ~ !IdChar)
   final def BREAK     = ("break" ~ !IdChar)
   final def BOOL      = ("bool" ~ !IdChar)
   final def CASE      = ("case" ~ !IdChar)
+  final def CATCH     = ("catch" ~ !IdChar)
   final def CHAR      = ("char" ~ !IdChar)
   final def CHAR16    = ("char16_t" ~ !IdChar)
   final def CHAR32    = ("char32_t" ~ !IdChar)
   final def CLASS     = ("class" ~ !IdChar)
   final def CONST     = ("const" ~ !IdChar)
+  final def CONSTEXPR = ("constexpr" ~ !IdChar)
+  final def CONST_CAST        = ("const_cast" ~ !IdChar)
   final def CONTINUE  = ("continue" ~ !IdChar)
+  final def DECLTYPE  = ("decltype" ~ !IdChar)
   final def DEFAULT   = ("default" ~ !IdChar)
-  final def DOUBLE    = ("double" ~ !IdChar)
+  final def DELETE    = ("delete" ~ !IdChar)
   final def DO        = ("do" ~ !IdChar)
+  final def DOUBLE    = ("double" ~ !IdChar)
+  final def DYNAMIC_CAST      = ("dynamic_cast" ~ !IdChar)
   final def ELSE      = ("else" ~ !IdChar)
   final def ENUM      = ("enum" ~ !IdChar)
-  final def EXTERN    = ("extern" ~ !IdChar)
   final def EXPLICIT  = ("explicit" ~ !IdChar)
+  final def EXPORT    = ("export" ~ !IdChar)
+  final def EXTERN    = ("extern" ~ !IdChar)
+  final def FALSE     = ("false" ~ !IdChar)
   final def FLOAT     = ("float" ~ !IdChar)
+  final def FRIEND    = ("friend" ~ !IdChar)
   final def FOR       = ("for" ~ !IdChar)
   final def GOTO      = ("goto" ~ !IdChar)
   final def IF        = ("if" ~ !IdChar)
-  final def INT       = ("int" ~ !IdChar)
   final def INLINE    = ("inline" ~ !IdChar)
+  final def INT       = ("int" ~ !IdChar)
   final def LONG      = ("long" ~ !IdChar)
   final def MUTABLE   = ("mutable" ~ !IdChar)
   final def NAMESPACE = ("namespace" ~ !IdChar)
+  final def NEW       = ("new" ~ !IdChar)
+  final def NOEXCEPT  = ("noexcept" ~ !IdChar)
+  final def NULLPTR   = ("nullptr" ~ !IdChar)
+  final def OPERATOR  = ("operator" ~ !IdChar)
   final def PRIVATE   = ("private" ~ !IdChar)
-  final def PUBLIC    = ("public" ~ !IdChar)
   final def PROTECTED = ("protected" ~ !IdChar)
+  final def PUBLIC    = ("public" ~ !IdChar)
   final def REGISTER  = ("register" ~ !IdChar)
+  final def REINTERPRET_CAST  = ("reinterpret_cast" ~ !IdChar)
   final def RESTRICT  = ("restrict" ~ !IdChar)
   final def RETURN    = ("return" ~ !IdChar)
   final def SHORT     = ("short" ~ !IdChar)
   final def SIGNED    = ("signed" ~ !IdChar)
   final def SIZEOF    = ("sizeof" ~ !IdChar)
   final def STATIC    = ("static" ~ !IdChar)
+  final def STATIC_ASSERT     = ("static_assert" ~ !IdChar)
+  final def STATIC_CAST       = ("static_cast" ~ !IdChar)
   final def STRUCT    = ("struct" ~ !IdChar)
   final def SWITCH    = ("switch" ~ !IdChar)
+  final def TEMPLATE  = ("template" ~ !IdChar)
+  final def THIS      = ("this" ~ !IdChar)
+  final def THREADLOCAL       = ("thread_local" ~ !IdChar)
+  final def THROW     = ("throw" ~ !IdChar)
+  final def TRUE      = ("true" ~ !IdChar)
+  final def TRY       = ("try" ~ !IdChar)
   final def TYPEDEF   = ("typedef" ~ !IdChar)
-  final def THREADLOCAL = ("thread_local" ~ !IdChar)
+  final def TYPEID    = ("typeid" ~ !IdChar)
+  final def TYPENAME  = ("typename" ~ !IdChar)
   final def UNION     = ("union" ~ !IdChar)
   final def UNSIGNED  = ("unsigned" ~ !IdChar)
   final def USING     = ("using" ~ !IdChar)
   final def VIRTUAL   = ("virtual" ~ !IdChar)
   final def VOID      = ("void" ~ !IdChar)
   final def VOLATILE  = ("volatile" ~ !IdChar)
+  final def WCHAR_T   = ("wchar_t" ~ !IdChar)
   final def WHILE     = ("while" ~ !IdChar)
   final def COMPLEX   = ("_Complex" ~ !IdChar)
   final def STDCALL   = ("_stdcall" ~ !IdChar)
@@ -254,24 +282,35 @@ class CPPParser extends Parser {
   // Preprocessor keywords do not need to appear here?
   def IsKeyword = rule(SuppressSubnodes) {
     (
-      "auto"
+        "alignas"
+        | "alignof"
+        | "asm"
+        | "auto"
         | "break"
+        | "bool"
         | "case"
-        // 'char' covers these
-        //        | "char16_t"
-        //        | "char32_t"
+        | "char16_t"
+        | "char32_t"
         | "char"
+        | "class"
+        | "constexpr"
+        | "const_cast"
         | "const"
         | "continue"
+        | "decltype"
         | "default"
+        | "delete"
         | "double"
         | "do"
+        | "dynamic_cast"
         | "else"
         | "enum"
         | "extern"
         | "explicit"
+        | "export"
         | "float"
         | "for"
+        | "friend"
         | "goto"
         | "if"
         | "int"
@@ -279,26 +318,37 @@ class CPPParser extends Parser {
         | "long"
         | "mutable"
         | "namespace"
+        | "new"
+        | "noexcept"
+        | "nullptr"
         | "private"
         | "protected"
         | "public"
         | "register"
+        | "reinterpret_cast"
         | "restrict"
         | "return"
         | "short"
         | "signed"
         | "sizeof"
+        | "static_assert"
+        | "static_cast"
         | "static"
         | "struct"
         | "switch"
         | "thread_local"
+        | "true"
+        | "try"
         | "typedef"
+        | "typeid"
+        | "typename"
         | "union"
         | "unsigned"
         | "using"
         | "virtual"
         | "void"
         | "volatile"
+        | "wchar_t"
         | "while"
         | "_Bool"
         | "_Complex"
@@ -529,6 +579,12 @@ class CPPParser extends Parser {
 
   def ClassSay = rule { optional(TemplateSay) ~ CLASS ~ Spacing ~ Identifier ~ LWING ~ SayList ~ RWING  ~~> Node.classSay _ }
 
+/**
+*/
+//TOCONSIDER: 7.1.1
+//Change: In C ++ , the static or extern specifiers can only be applied to names of objects or functions
+//Not structs
+  def StructSay = rule { optional(TemplateSay) ~ STRUCT ~ Spacing ~ Identifier ~ LWING ~ SayList ~ RWING  ~~> Node.structSay _ }
 
   // 5.2.2 Function call
   // Postfix-expression followed by initializer-clauses

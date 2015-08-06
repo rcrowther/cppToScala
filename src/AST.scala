@@ -143,11 +143,25 @@ case class FieldSayNode(
 
 
 /** A class definition.
-  *  class a() {}
+*
+  *  e.g. class a() {}
   */
 case class ClassSayNode(
   privacy: MarkNode,
   inherit: Seq[String],
+  modifiers: Seq[String],
+  genericParams: Option[List[IdentifierNode]],
+  name: IdentifierNode,
+  body: RootNode
+) extends AstNode
+
+
+/** A class definition.
+*
+  *  e.g. class a() {}
+  */
+case class StructSayNode(
+  privacy: MarkNode,
   modifiers: Seq[String],
   genericParams: Option[List[IdentifierNode]],
   name: IdentifierNode,
@@ -308,6 +322,18 @@ object Node {
   ) = new ClassSayNode(
     privacy = Node.Public,
     inherit = Seq.empty[String],
+    modifiers = Seq.empty[String],
+    genericParams,
+    name,
+    body
+  )
+
+  def structSay(
+    genericParams: Option[List[IdentifierNode]],
+    name: IdentifierNode,
+    body: RootNode
+  ) = new StructSayNode(
+    privacy = Node.Public,
     modifiers = Seq.empty[String],
     genericParams,
     name,
@@ -854,12 +880,23 @@ object AST {
         b ++= "class "
         b ++= name.text
 
-
         if (genericParams != None) {
           genericList(b, genericParams.get)
         }
 
         inheritanceWrite(b, inherit)
+
+        b += '\n'
+        codeBlock(b, body.elems)
+      }
+
+      case StructSayNode(privacy, modifiers, genericParams, name, body) => {
+        b ++= "struct "
+        b ++= name.text
+
+        if (genericParams != None) {
+          genericList(b, genericParams.get)
+        }
 
         b += '\n'
         codeBlock(b, body.elems)
