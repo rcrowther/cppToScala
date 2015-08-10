@@ -584,7 +584,11 @@ object AST {
     // - defined chars are commented, for now.
 
     var longCount = mods.count( "long" == _)
-
+//std::string
+// and
+// c_str()
+//could be binary.
+//TODO: Make optional implementation.
     val ret =
       n.word match {
         //case "void" =>

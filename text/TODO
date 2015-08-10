@@ -1,11 +1,16 @@
+co, not mo, for complementary objects
+pointer translation
+if ... then ? : ops
+handle final : privacy before inheritance
+make trace an option
+and string traslates
 Postfix increment/decrement
 find abstract classes/traits
 kill empty bodies?
 Enable camel casing?
 FMStub is the beginning of treating methods consistently
-struct to class
 size_t convert  + include
-handle directoryies, either everything or not ata ll.
+handle directories, either everything or not at all.
 
 == 'No' for now
 Provide jar
