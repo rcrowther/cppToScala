@@ -14,6 +14,7 @@ abstract class CommanLineParserBase[A <: OptionEntryBase](
   protected val summary: String,
   protected val usage: String,
   protected val notes: String,
+  protected val version : String,
   protected val credits : String
 )
 {
@@ -113,12 +114,23 @@ abstract class CommanLineParserBase[A <: OptionEntryBase](
     val sb =  new StringBuilder("")
     sb.append("Usage: ")
     sb.append(usage)
-    sb.append(" [ACTION]\n")
+    sb.append(" <switches><params>\n")
     sb.append(summary)
     sb.append("\n")
     sb.append(blockSplit(0, 0, notes))
     sb.append("\nOptions:\n")
     sb.append(getOptionHelp)
+    sb.append(credits)
+    System.err.println(sb.result)
+  }
+
+  protected def printVersion
+  {
+    val sb =  new StringBuilder("")
+    sb.append(usage)
+    sb.append(" ")
+    sb.append(version)
+    sb.append("\n")
     sb.append(credits)
     System.err.println(sb.result)
   }

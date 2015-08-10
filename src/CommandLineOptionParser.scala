@@ -13,11 +13,12 @@ final class OptionEntryTarget  (
 
 /** Switch argument commandline parser with one parameter.
   *
-  * This parser only calls back on one method, and sends all the
-  * details to that method as a x(options:Map[String, Boolean],
-  * arg:String). The string key in the Map being the long name
-  * supplied by the user. This key will include the long switch
-  * indication (e.g. "--quiet")
+  * This parser calls back on a method, and sends processed details to
+  * that method as x(options:Map[String, Boolean],
+  * arg:Seq[String]). The string key in the Map is the long switch
+  * name supplied by the user. This key will include the long switch
+  * indication (e.g. "--quiet"). If the user supplies short switches,
+  * these are turned into the long version.
   *
   * Switch values are initially false. If the user states them, the
   * values become true. Reword the switch to reverse behaviour
@@ -31,7 +32,7 @@ final class OptionEntryTarget  (
   * @param codeName the name of the class/object with the main method.
   * @param summary one line statement of the general intention of the
   * invokation.
-  * @param usage the format of the base invocation.
+  * @param usage the format of the base invocation - usually the program name.
   * @param notes extra detail for understanding the usage.
   * @param callback method to be called if the user input parses.
   */
@@ -40,24 +41,27 @@ final class CommandLineOptionParser(
   summary: String,
   usage: String,
   notes: String,
+  version : String,
   credits : String,
-  private val callback: (Map[String, Boolean], String) => Unit
+  private val callback: (Map[String, Boolean], Seq[String]) => Unit
 )
     extends CommanLineParserBase[OptionEntryTarget](
   codeName,
       summary,
       usage,
       notes,
+      version,
       credits
 )
 {
 
   protected var options = IndexedSeq[OptionEntryTarget](
     // Though unused, here so it will display in help.
-    new OptionEntryTarget("--help", "-h","display this help and exit", false)
+    new OptionEntryTarget("--help", "-h","display this help and exit", false),
+    new OptionEntryTarget("--version", "-vsn","display version information and exit", false)
   )
 
-  private def getValues() : Map[String, Boolean] = options.map(oe => (oe.long, oe.value)).toMap
+  private def getSwitches() : Map[String, Boolean] = options.map(o => (o.long, o.value)).toMap
 
 
   protected def helpPrompt
@@ -117,32 +121,55 @@ final class CommandLineOptionParser(
 
   def parse(args: Array[String])
   {
-    // An inconsistent format, caught here
-    if (args.length > 0 && args.contains("--help")) {
-      printHelp
+
+    if (args.length == 0) {
+      System.err.println(s"$codeName: missing arguments")
+      helpPrompt
     }
     else {
-      if (args.length == 0 || args.last.charAt(0) == '-') {
-        System.err.println(s"$codeName: missing argument <file>")
-        helpPrompt
+
+      // Split switches from values
+      var splitPoint = 0
+      var cont = true
+      val limit = args.size
+      do {
+        if (args(splitPoint).charAt(0) == '-') splitPoint += 1
+        else cont = false
+      } while(splitPoint < limit && cont)
+
+      val (switches, values) = args.splitAt(splitPoint)
+
+      // Check no switches in values
+      val falseValues = values.filter(_.charAt(0) == '-')
+      if (!falseValues.isEmpty) {
+        System.err.println(s"$codeName: switch(es) in value position: ${falseValues.mkString(" ")}")
       }
       else {
 
-        val value = args.last
-        val switches = args.slice(0, args.size - 1).toList
         if (switches.isEmpty) {
-          callback(getValues, args(0))
+          callback(getSwitches, values)
         }
         else {
 
-          optionsRecurse(switches) match {
+          optionsRecurse(switches.toList) match {
             case Some(option) => {
               System.err.println(s"$codeName: invalid argument -- '$option'")
               helpPrompt
             }
             case None => {
-              val v = getValues
-              callback(v, value)
+              val processedSwitches = getSwitches
+              // Inconsistent formats and immediacies, caught here
+              if (
+                processedSwitches("--help")
+                  || processedSwitches("--version")
+              )
+              {
+                if (processedSwitches("--help")) printHelp
+                else printVersion
+              }
+              else {
+                callback(processedSwitches, values)
+              }
             }
           }
         }
@@ -162,12 +189,20 @@ object CommandLineOptionParser
     summary: String,
     usage: String,
     notes: String,
+    version : String,
     credits : String,
-    callback: (Map[String, Boolean], String) => Unit
+    callback: (Map[String, Boolean], Seq[String]) => Unit
   )
       : CommandLineOptionParser =
   {
-    new CommandLineOptionParser(codeName, summary, usage, notes, credits, callback
+    new CommandLineOptionParser(
+      codeName,
+      summary,
+      usage,
+      notes,
+      version,
+      credits,
+      callback
     )
   }
 

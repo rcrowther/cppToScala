@@ -582,7 +582,6 @@ object AST {
     // - more than two mentions of long makes it Scala Long
     // else long is Scala Int
     // - defined chars are commented, for now.
-
     var longCount = mods.count( "long" == _)
 //std::string
 // and

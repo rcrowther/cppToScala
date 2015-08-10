@@ -1,13 +1,6 @@
 package converter
 
 
-
-/**
-  * Run using:
-  * ./CPPToScala <filename> 
-  */
-
-
 // import collection.JavaConversions._
 import scala.collection.JavaConverters._
 import java.nio.file.Path
@@ -71,9 +64,8 @@ object CPPToScala {
   }
 
 
-  def run(opts: Map[String, Boolean], fileStr: String) {
+  def convert(opts: Map[String, Boolean], fileStr: String) {
 
-    Trace.info(s"starting...")
     val parser = new CPPParser()
 
     val charset = StandardCharsets.UTF_8
@@ -82,8 +74,11 @@ object CPPToScala {
     val fOut = toOutputFile(fIn, "scala")
     val dataIn = readFile(fIn, charset)
 
-    //val ast = parser.parseCPP(dataIn)
-    val ast = parser.traceCPP(dataIn)
+    //val ast =
+    val ast =
+      if (opts("--parserTrace")) parser.traceCPP(dataIn)
+      else parser.parseCPP(dataIn)
+
     //println("ast:")
     //println(ast)
 
@@ -122,15 +117,19 @@ object CPPToScala {
     Trace.plain(s"output written to $fOut")
   }
 
-
+  def run(opts: Map[String, Boolean], fileStrs: Seq[String]) {
+    Trace.info(s"starting...")
+    fileStrs.foreach(convert(opts, _))
+  }
 
   def main(args: Array[String]) {
 
     val cl = new common.CommandLineOptionParser(
       codeName = "cppToScalaConverter",
-      summary = "attempt to make a Scala code from C++ code",
-      usage = "scala CPPToScala",
+      summary = "attempt Scala code from C++ code",
+      usage = "CPPToScala",
       notes = "Produces a file of information from the given file.",
+      version = Version.version,
       credits = "Copyright rcrowther 2015",
       callback = run _
     )
@@ -138,7 +137,7 @@ object CPPToScala {
 
     cl += (
       long = "makeObjects",
-      short = "mo",
+      short = "co",
       description = "generate code for (the shell of) complementary objects"
     )
 
@@ -162,8 +161,14 @@ object CPPToScala {
 
     cl += (
       long = "noNamespacing",
-      short = "nn",
+      short = "nns",
       description = "do not place namespace indications on namespaced code"
+    )
+
+    cl += (
+      long = "parserTrace",
+      short = "t",
+      description = "generate a trace from the parser (mainly for internal debugging)"
     )
 
     cl.parse(args)
