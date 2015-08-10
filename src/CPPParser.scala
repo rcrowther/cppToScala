@@ -575,9 +575,13 @@ class CPPParser extends Parser {
   // TOCONSIDER: If methods were regarded as starting with a FieldKnow...
   def MethodSay = rule { FMSay ~ LPAR ~ TypedIdPairList ~ RPAR ~ optional(CONST ~ Spacing) ~ (LWING  ~ SayList ~ RWING | EQU ~ "0" ~ push(Node.abstractSay)) ~~> Node.methodSay _ }
 
+def ClassBaseModifiers: Rule1[List[KeywordNode]] = rule { zeroOrMore( (PUBLIC | PROTECTED | PRIVATE | VIRTUAL) ~> KeywordNode  ~ Spacing) }
 
+def ClassBase: Rule1[ClassBaseNode] = rule { ClassBaseModifiers ~ Spacing ~ Identifier ~~> ClassBaseNode }
 
-  def ClassSay = rule { optional(TemplateSay) ~ CLASS ~ Spacing ~ Identifier ~ LWING ~ SayList ~ RWING  ~~> Node.classSay _ }
+//def ClassBaseList = rule { oneOrMore(ClassBase, separator = Spacing) }
+
+  def ClassSay = rule { optional(TemplateSay) ~ CLASS ~ Spacing ~ Identifier ~ optional(COLON ~ oneOrMore(ClassBase, separator = Spacing)) ~ LWING ~ SayList ~ RWING  ~~> Node.classSay _ }
 
 /**
 */

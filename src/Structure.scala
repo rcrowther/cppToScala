@@ -111,7 +111,7 @@ final class Structure(
       : List[AstNode] =
   {
 
-    val names: Seq[String] = elems.collect{ case ClassSayNode(_, _, _, template, name, _) => name.text }
+    val names: Seq[String] = elems.collect{ case ClassSayNode(_, _, template, name, _, _) => name.text }
 
     val newObjects = names.map{ name =>
       new ObjectSayNode(

@@ -74,7 +74,6 @@ object CPPToScala {
     val fOut = toOutputFile(fIn, "scala")
     val dataIn = readFile(fIn, charset)
 
-    //val ast =
     val ast =
       if (opts("--parserTrace")) parser.traceCPP(dataIn)
       else parser.parseCPP(dataIn)

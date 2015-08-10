@@ -141,6 +141,10 @@ case class FieldSayNode(
 }
 
 
+case class ClassBaseNode(
+modifiers: List[KeywordNode],
+name: IdentifierNode
+)
 
 /** A class definition.
 *
@@ -148,10 +152,10 @@ case class FieldSayNode(
   */
 case class ClassSayNode(
   privacy: MarkNode,
-  inherit: Seq[String],
   modifiers: Seq[String],
   genericParams: Option[List[IdentifierNode]],
   name: IdentifierNode,
+  inherit: Option[List[ClassBaseNode]],
   body: RootNode
 ) extends AstNode
 
@@ -318,13 +322,14 @@ object Node {
   def classSay(
     genericParams: Option[List[IdentifierNode]],
     name: IdentifierNode,
+    inherit: Option[List[ClassBaseNode]],
     body: RootNode
   ) = new ClassSayNode(
     privacy = Node.Public,
-    inherit = Seq.empty[String],
     modifiers = Seq.empty[String],
     genericParams,
     name,
+    inherit,
     body
   )
 
@@ -722,15 +727,19 @@ object AST {
     *
     *  e.g. " extends Slacker with Looser"
     */
-  def inheritanceWrite(b: StringBuilder, inherit: Seq[String]) {
+  def inheritanceWrite(b: StringBuilder, inherit: Option[List[ClassBaseNode]]) {
+    if (inherit != None) {
+    val bases = inherit.get
     var first = true
-    inherit.foreach{ i =>
+    bases.foreach{ base =>
       if (first) {
         b ++= "extends "
         first = false
       }
       else b ++= "with "
-      b ++= i
+
+      b ++= base.name.text
+    }
     }
   }
 
@@ -879,7 +888,7 @@ object AST {
         b += '\n'
       }
 
-      case ClassSayNode(privacy, inherit, modifiers, genericParams, name, body) => {
+      case ClassSayNode(privacy, modifiers, genericParams, name, inherit, body) => {
         b ++= "class "
         b ++= name.text
 
